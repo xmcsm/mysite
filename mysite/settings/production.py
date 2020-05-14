@@ -35,7 +35,7 @@ DATABASES = {
         'NAME': 'mysite',
         'USER':'root',
         'PASSWORD':DATABASE_PASSWORD,
-        'HOST':'192.168.2.116',
+        'HOST':'127.0.0.1',
         'PORT':'13306'
     }
 }

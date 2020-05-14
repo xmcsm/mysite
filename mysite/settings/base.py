@@ -122,7 +122,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 
 # 配置ckeditor
 CKEDITOR_UPLOAD_PATH = 'upload/'
-
+CKEDITOR_RESTRICT_BY_USER = True
+CKEDITOR_BROWSE_SHOW_DIRS = True
 CKEDITOR_CONFIGS = {
     'default':{},
     'comment_ckeditor':{
@@ -136,6 +137,24 @@ CKEDITOR_CONFIGS = {
         ],
         'width':'auto',
         'height':'180',
+        'tabSpaces':4,
+        'removePlugins':'elementspath',
+        'resize_enabled':False,
+    },
+    'blog_ckeditor':{
+        'toolbar':'custom',
+        'toolbar_custom':[
+            ['Templates','Cut ','Copy ','Paste','PasteText'],
+            ['Bold','Italic','Underline','Strike','Subscript','Superscript'],
+            ['TextColor','BGColor','RemoveFormat'],
+            ['NumberedList','BulletedLIst'],
+            ['Link','Unlink'],
+            ['Smiley','SpecialChar','Blockquote'],
+            ['Image','Table','Link','Unlink'], ["Anchor"],
+            ['Source'],
+        ],
+        'width':'auto',
+        'height':'240',
         'tabSpaces':4,
         'removePlugins':'elementspath',
         'resize_enabled':False,

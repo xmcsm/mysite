@@ -28,8 +28,8 @@
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li class=""><a href="/">首页</a></li>
-                    <li class=""><a href="{% url 'blog_list' %}">博客</a></li>
+                    <li class="{% block nav_index_active %}{% endblock %}"><a href="/">首页</a></li>
+                    <li class="{% block nav_blog_active %}{% endblock %}"><a href="{% url 'blog_list' %}">博客</a></li>
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right">
@@ -58,6 +58,12 @@
 
     {% block body_center %}{% endblock %}
 
+    <!-- footer -->
+    <div class="navbar-fixed-bottom footer">
+        <div class="webstie-info">
+            <p>备案号信息 Copyright©2020 个人网站</p>
+        </div>
+    </div>
     <!-- Modal -->
     <div class="modal fade" id="login_modal" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-sm" role="document">

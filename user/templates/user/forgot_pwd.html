@@ -1,0 +1,61 @@
+{% extends 'form.html' %}
+
+
+{% block other_buttons %}
+    <input type="button" id="send_code" class="btn btn-primary" value="发送验证码">
+{% endblock %}
+
+{% block script_extends %}
+    <script type="text/javascript">
+        $('#send_code').click(function(){
+            $('#error_tip').text('');
+            var email = $('#id_email').val();
+            if(email==""){
+                $('#error_tip').text('* 邮箱不能为空!');
+                return false
+            }
+
+            var time = 60;
+
+            // 发送验证码
+            $.ajax({
+                url:'{% url 'send_verification_code' %}',
+                type:'GET',
+                data:{
+                    'email':email,
+                    'send_for':'forgotpassword_code',
+                    'email_tile':'重置密码',
+                },
+                cache:false,
+                success: function (data) {
+                    console.log(data)
+                    if(data['status']=='ERROR'){
+                        alert(data['status'])
+                    }else if(data['status']=='ERROR_CODE_TIME'){
+                        time = data['time']
+                    }
+
+                    //按钮变灰
+                    $('#send_code').addClass('disabled');
+                    $('#send_code').attr('disabled',true);
+
+                    $('#send_code').val(time + 's');
+                    var interval = setInterval(() => {
+                        if(time <= 0){
+                            clearInterval(interval);
+                            $('#send_code').removeClass('disabled');
+                            $('#send_code').attr('disabled',false);
+                            $('#send_code').val('发送验证码');
+                            return false;
+                        };
+                        time --;
+                        $('#send_code').val(time + 's');
+                    },1000);
+                },
+                error:function (xhr) {
+                    $('#error_tip').text('发送失败！错误代码：'+xhr.status +'，错误信息：'+xhr.statusText);
+                }
+            });
+        });
+    </script>
+{% endblock %}

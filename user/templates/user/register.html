@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+
+{% block title %}
+    我的网站|注册
+{% endblock %}
+
+{% block nav_index_active %} active {% endblock %}
+
+{% block body_center %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-6 col-xs-offset-3">
+                {% if not user.is_authenticated %}
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">注册</h3>
+                        </div>
+                        <div class="panel-body">
+                            <form action="#" method="post">
+                                {% csrf_token %}
+                                {% for field in reg_form %}
+                                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    {{ field }}
+                                    <p class="text-danger">{{ field.errors.as_text }}</p>
+                                {% endfor %}
+                                <span id="error_tip" class="pull-left text-danger">{{ reg_form.non_field_errors }}</span>
+                                <div class="clearfix"></div>
+                                <input type="button" id="send_code" class="btn btn-primary pull-left" value="发送验证码">
+                                <input type="submit" value="注册" class="btn btn-primary pull-right">
+                            </form>
+                        </div>
+                    </div>
+                {% else %}
+                    <span>已登录，<span id="redirect_time"></span>后跳转到<a href="/">首页</a>...</span>
+                    <script type="text/javascript">
+                        var time = 3;
+                        $('#redirect_time').text(time + 's');
+                        var interval = setInterval(() => {
+                            if(time <= 0){
+                                clearInterval(interval);
+                                window.location.href = '/'
+                                return false;
+                            };
+                            time --;
+                            $('#redirect_time').text(time + 's');
+                        },1000);
+                    </script>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block script_extends %}
+    <script type="text/javascript">
+        $('#send_code').click(function(){
+            var email = $('#id_email').val();
+            if(email==""){
+                $('#error_tip').text('* 邮箱不能为空!');
+                return false
+            }
+
+            var time = 60;
+
+            // 发送验证码
+            $.ajax({
+                url:'{% url 'send_verification_code' %}',
+                type:'GET',
+                data:{
+                    'email':email,
+                    'send_for':'register_code',
+                    'email_tile':'帐号注册',
+                },
+                cache:false,
+                success: function (data) {
+                    if(data['status']=='ERROR'){
+                        alert(data['status'])
+                    }else if(data['status']=='ERROR_CODE_TIME'){
+                        time = data['time']
+                    }
+
+                    //按钮变灰
+                    $('#send_code').addClass('disabled');
+                    $('#send_code').attr('disabled',true);
+                    $('#send_code').val(time + 's');
+                    var interval = setInterval(() => {
+                        if(time <= 0){
+                            clearInterval(interval);
+                            $('#send_code').removeClass('disabled');
+                            $('#send_code').attr('disabled',false);
+                            $('#send_code').val('发送验证码');
+                            return false;
+                        };
+                        time --;
+                        $('#send_code').val(time + 's');
+                    },1000);
+                },
+                error:function (xhr) {
+                    $('#error_tip').text('发送失败！错误代码：'+xhr.status +'，错误信息：'+xhr.statusText);
+                }
+            });
+        });
+    </script>
+{% endblock %}
+
+
